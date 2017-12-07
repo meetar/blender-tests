@@ -100,7 +100,8 @@ def download(output_path, tiles, api_key, verbose=True):
                 except:
                     pass
 
-
+    # except IOError:
+    #     raise IOError
     finally:
         if merge_geotiff:
             shutil.rmtree(dir)
