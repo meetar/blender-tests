@@ -71,12 +71,12 @@ def doit(path, offset = [0,0]):
 	# scale texture according to image size (not strictly necessary)
 	tile.scale[0] = w/100
 	tile.scale[1] = h/100
-	tile.scale[2] = 1000
+	tile.scale[2] = float(params[1])
 	bpy.ops.object.modifier_add(type='SUBSURF')
 
 	tile.modifiers["Subsurf"].subdivision_type = 'SIMPLE'
 	tile.cycles.use_adaptive_subdivision = True
-	tile.modifiers["Subsurf"].levels = 1
+	tile.modifiers["Subsurf"].levels = 0
 	tile.modifiers["Subsurf"].render_levels = 6
 	tile.modifiers["Subsurf"].use_subsurf_uv = False
 	tile.modifiers["Subsurf"].show_only_control_edges = True
@@ -84,6 +84,7 @@ def doit(path, offset = [0,0]):
 
 	bpy.context.object.active_material.cycles.displacement_method = 'TRUE'
 
+	tile.parent = scale_control
 
 
 path=params[0]
@@ -142,6 +143,10 @@ elif os.path.isdir(path):
 	# cleanup default object
 	bpy.ops.object.delete(use_global=False)
 
+	scale_control = bpy.ops.object.empty_add(type='PLAIN_AXES', radius=1, view_align=False, location=(0, 0, 0))
+	scale_control=bpy.context.selected_objects[0]
+	scale_control.name=" TILES SCALE"
+
 	# get range
 	for file in files:
 		print('file:'+file)
@@ -162,6 +167,11 @@ elif os.path.isdir(path):
 	context.object.data.type = 'SUN'
 	context.object.data.shadow_method = 'NOSHADOW'
 	context.object.data.use_specular = False
+
+	bpy.ops.view3d.camera_to_view()
+	bpy.context.space_data.lock_camera = True
+	bpy.context.space_data.clip_end = 100000
+	bpy.context.object.data.clip_end = 100000
 	
 	# scene.world.light_settings.gather_method = 'APPROXIMATE'
 	# scene.world.light_settings.use_ambient_occlusion = True
